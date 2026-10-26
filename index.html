@@ -170,6 +170,7 @@ document.querySelectorAll(".game").forEach(btn=>{
   });
 });
 
+
 function order(){
   const player = document.getElementById("player").value.trim();
   const server = document.getElementById("server").value.trim();
@@ -179,30 +180,31 @@ function order(){
     return;
   }
 
-  if(game==="Mobile Legends" && !server){
+  if(game === "Mobile Legends" && !server){
     alert("Isi Server ID Mobile Legends juga ya!");
     return;
   }
 
   const item = products[game][chosen];
 
-  const message =
-    "Halo admin VyroStore! Saya mau pesan top up.%0A%0A" +
-    "Game: " + encodeURIComponent(game) + "%0A" +
-    "User ID/Username: " + encodeURIComponent(player) + "%0A" +
-    (game==="Mobile Legends" ?
-      "Server ID: " + encodeURIComponent(server) + "%0A" : "") +
-    "Produk: " + encodeURIComponent(item[0]) + "%0A" +
-    "Harga demo: " + encodeURIComponent(rupiah(item[1])) + "%0A%0A" +
-    "Mohon konfirmasi pesanan saya.";
+  const message = [
+    "Halo admin VYRO STORE! Saya mau pesan top up.",
+    "",
+    "Game: " + game,
+    "User ID/Username: " + player,
+    ...(game === "Mobile Legends"
+      ? ["Server ID: " + server]
+      : []),
+    "Produk: " + item[0],
+    "Harga sementara: " + rupiah(item[1]),
+    "",
+    "Mohon konfirmasi harga dan ketersediaan sebelum pembayaran."
+  ].join("\n");
 
-  // Ganti dengan nomor WhatsApp admin, format 62 tanpa tanda +.
   const nomorAdmin = "6281234089110";
-  window.open("https://wa.me/" + nomorAdmin + "?text=" + message, "_blank");
-}
+  const url = "https://wa.me/" + nomorAdmin +
+    "?text=" + encodeURIComponent(message);
 
-renderPackages();
-</script>
-</body>
-  </html>
+  window.open(url, "_blank");
+    }
   
