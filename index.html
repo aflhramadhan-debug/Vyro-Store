@@ -127,6 +127,7 @@ function rupiah(n){
   return "Rp " + n.toLocaleString("id-ID");
 }
 
+
 function renderPackages(){
   const list = products[game];
   if(chosen >= list.length) chosen = 0;
@@ -136,9 +137,11 @@ function renderPackages(){
       <button class="pack ${i===chosen?'active':''}"
         onclick="choosePackage(${i})">
         <strong>${p[0]}</strong>
-        <small>${rupiah(p[1])}</small>
+        <small>Tanya harga</small>
       </button>
     `).join("");
+}
+  
 
   document.getElementById("selected").textContent =
     game + " · " + list[chosen][0];
