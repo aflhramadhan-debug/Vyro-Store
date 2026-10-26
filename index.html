@@ -1,0 +1,201 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vyro Store - Top Up Game</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#0b0b14;color:#f7f5ff;
+font-family:Arial,sans-serif}
+header{padding:20px 16px;display:flex;justify-content:space-between;
+align-items:center;border-bottom:1px solid #28243b}
+.logo{font-size:22px;font-weight:900;color:#b99aff}
+.logo span{color:white}
+.tag{font-size:11px;color:#c5b8df}
+main{max-width:650px;margin:auto;padding:22px 16px 40px}
+.hero{background:linear-gradient(135deg,#321766,#17152d);
+padding:24px;border-radius:20px;margin-bottom:25px}
+.hero small{color:#c7a9ff}
+h1{font-size:29px;margin:10px 0}
+p{color:#bdb8ce;line-height:1.5}
+h2{font-size:18px;margin:24px 0 13px}
+.games{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.game{border:1px solid #302b43;background:#151421;color:white;
+border-radius:14px;padding:15px 5px;cursor:pointer}
+.game .emoji{font-size:28px;display:block;margin-bottom:9px}
+.game.active{border:2px solid #a779ff;background:#27203b}
+.game b{font-size:13px}
+.field{margin:14px 0}
+label{display:block;font-size:13px;margin-bottom:8px;color:#ddd4f0}
+input,select{width:100%;padding:14px;border:1px solid #373148;
+border-radius:11px;background:#151421;color:white;font-size:15px}
+.packages{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.pack{background:#151421;color:white;border:1px solid #302b43;
+border-radius:12px;padding:15px 12px;text-align:left;cursor:pointer}
+.pack.active{border:2px solid #a779ff;background:#27203b}
+.pack strong,.pack small{display:block}
+.pack small{color:#bcb1d3;margin-top:8px}
+.note{font-size:12px;color:#a9a2bd}
+.summary{background:#171522;border-radius:14px;padding:16px;margin-top:20px}
+.total{font-size:23px;font-weight:bold;color:#c7a4ff;margin:10px 0}
+.buy{width:100%;background:#8b5cf6;color:white;border:0;
+border-radius:12px;padding:16px;font-weight:bold;font-size:16px;
+margin-top:12px;cursor:pointer}
+footer{text-align:center;padding:24px;color:#777187;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">VYRO <span>STORE</span></div>
+  <div class="tag">TOP UP GAME ⚡</div>
+</header>
+
+<main>
+  <section class="hero">
+    <small>WELCOME TO VYRO STORE</small>
+    <h1>Push Rank.<br>We Got Your Diamonds.</h1>
+    <p>Pilih game favorit lu, pilih paket, lalu pesan dengan mudah lewat WhatsApp VYRO STORE.a</p>
+  </section>
+
+  <h2>1. Pilih game</h2>
+  <div class="games" id="games">
+    <button class="game active" data-game="Mobile Legends">
+      <span class="emoji">⚔️</span><b>Mobile Legends</b>
+    </button>
+    <button class="game" data-game="Free Fire">
+      <span class="emoji">🔥</span><b>Free Fire</b>
+    </button>
+    <button class="game" data-game="Roblox">
+      <span class="emoji">🧱</span><b>Roblox</b>
+    </button>
+  </div>
+
+  <h2>2. Masukkan data akun</h2>
+  <div class="field">
+    <label for="player">User ID / Username</label>
+    <input id="player" placeholder="Masukkan User ID atau username">
+  </div>
+  <div class="field" id="serverField">
+    <label for="server">Server ID (Mobile Legends)</label>
+    <input id="server" placeholder="Contoh: 1234">
+  </div>
+
+  <h2>3. Pilih nominal</h2>
+  <div class="packages" id="packages"></div>
+  <p class="note">Harga di bawah hanya contoh untuk demo. Ubah sesuai harga jual dan biaya pemasok sebelum menerima pesanan.</p>
+
+  <section class="summary">
+    <div class="tag">RINGKASAN PESANAN</div>
+    <p id="selected">Mobile Legends · 86 Diamonds</p>
+    <div class="total" id="total">Rp 20.000</div>
+    <button class="buy" onclick="order()">Pesan via WhatsApp ↗</button>
+    <p class="note">Pesanan akan dikirim ke admin untuk dikonfirmasi. Top up belum otomatis.</p>
+  </section>
+</main>
+
+<footer>© 2026 VYRO STORE · Level Up. Top Up.</footer>
+
+<script>
+const products = {
+  "Mobile Legends": [
+    ["86 Diamonds",20000],["172 Diamonds",39000],
+    ["257 Diamonds",58000],["344 Diamonds",77000]
+  ],
+  "Free Fire": [
+    ["70 Diamonds",10000],["140 Diamonds",20000],
+    ["355 Diamonds",49000],["720 Diamonds",98000]
+  ],
+  "Roblox": [
+    ["Robux - paket 1",15000],["Robux - paket 2",30000],
+    ["Robux - paket 3",50000],["Voucher Roblox",75000]
+  ]
+};
+
+let game = "Mobile Legends";
+let chosen = 0;
+
+function rupiah(n){
+  return "Rp " + n.toLocaleString("id-ID");
+}
+
+function renderPackages(){
+  const list = products[game];
+  if(chosen >= list.length) chosen = 0;
+
+  document.getElementById("packages").innerHTML =
+    list.map((p,i)=>`
+      <button class="pack ${i===chosen?'active':''}"
+        onclick="choosePackage(${i})">
+        <strong>${p[0]}</strong>
+        <small>${rupiah(p[1])}</small>
+      </button>
+    `).join("");
+
+  document.getElementById("selected").textContent =
+    game + " · " + list[chosen][0];
+  document.getElementById("total").textContent =
+    rupiah(list[chosen][1]);
+}
+
+function choosePackage(i){
+  chosen = i;
+  renderPackages();
+}
+
+document.querySelectorAll(".game").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    game = btn.dataset.game;
+    chosen = 0;
+    document.querySelectorAll(".game").forEach(b=>
+      b.classList.toggle("active",b===btn)
+    );
+
+    document.getElementById("serverField").style.display =
+      game === "Mobile Legends" ? "block" : "none";
+
+    document.getElementById("player").placeholder =
+      game === "Roblox" ? "Masukkan username Roblox" :
+      "Masukkan User ID";
+
+    renderPackages();
+  });
+});
+
+function order(){
+  const player = document.getElementById("player").value.trim();
+  const server = document.getElementById("server").value.trim();
+
+  if(!player){
+    alert("Isi User ID atau username dulu ya!");
+    return;
+  }
+
+  if(game==="Mobile Legends" && !server){
+    alert("Isi Server ID Mobile Legends juga ya!");
+    return;
+  }
+
+  const item = products[game][chosen];
+
+  const message =
+    "Halo admin NovaStore! Saya mau pesan top up.%0A%0A" +
+    "Game: " + encodeURIComponent(game) + "%0A" +
+    "User ID/Username: " + encodeURIComponent(player) + "%0A" +
+    (game==="Mobile Legends" ?
+      "Server ID: " + encodeURIComponent(server) + "%0A" : "") +
+    "Produk: " + encodeURIComponent(item[0]) + "%0A" +
+    "Harga demo: " + encodeURIComponent(rupiah(item[1])) + "%0A%0A" +
+    "Mohon konfirmasi pesanan saya.";
+
+  // Ganti dengan nomor WhatsApp admin, format 62 tanpa tanda +.
+  const nomorAdmin = "6281234089110";
+  window.open("https://wa.me/" + nomorAdmin + "?text=" + message, "_blank");
+}
+
+renderPackages();
+</script>
+</body>
+  </html>
+  
